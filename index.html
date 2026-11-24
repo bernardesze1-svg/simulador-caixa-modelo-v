@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f7f4">
+    <title>Caixa de teste — Simulador Modelo V</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Caixa de teste, início">
+          <span class="brand-mark" aria-hidden="true">C</span>
+          <span>caixa<span class="brand-light"> de teste</span></span>
+        </a>
+        <span class="environment"><span class="environment-dot"></span> AMBIENTE DE SIMULAÇÃO</span>
+      </header>
+      <main id="main-content">
+        <section class="intro" aria-labelledby="page-title">
+          <p class="eyebrow">LABORATÓRIO DE TESTES <span>·</span> MODELO V</p>
+          <h1 id="page-title">Um caixa eletrônico.<br><span>Muitos cenários.</span></h1>
+          <p class="intro-copy">Simule operações e falhas para entender como cada etapa responde — sem movimentar dinheiro de verdade.</p>
+        </section>
+        <section class="simulator" aria-label="Simulador de caixa eletrônico">
+          <div class="atm-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">TERMINAL 01</p><h2>Simulador de operações</h2></div>
+              <span class="terminal-status"><span class="environment-dot"></span> Online</span>
+            </div>
+            <div class="balance-card">
+              <div class="balance-label"><span>Saldo em conta</span><span class="balance-icon" aria-hidden="true">↗</span></div>
+              <p class="balance-amount" id="account-balance" aria-live="polite">R$ 2.450,00</p>
+              <div class="balance-footer">
+                <span>Disponível para saque</span>
+                <button class="text-button" id="balance-button" type="button">Consultar saldo <span aria-hidden="true">→</span></button>
+              </div>
+            </div>
+            <form id="withdraw-form" novalidate>
+              <label class="field-label" for="pin">Senha de demonstração</label>
+              <input class="text-input" id="pin" name="pin" type="password" value="1234" inputmode="numeric" maxlength="4" autocomplete="off" aria-describedby="pin-help">
+              <p class="field-help" id="pin-help">PIN fictício: 1234. Nunca use uma senha real.</p>
+              <label class="field-label" for="amount">Quanto deseja sacar?</label>
+              <div class="amount-input">
+                <span aria-hidden="true">R$</span>
+                <input id="amount" name="amount" type="number" min="10" step="10" value="100" inputmode="decimal" aria-describedby="amount-help">
+              </div>
+              <p class="field-help" id="amount-help">Informe um valor múltiplo de R$ 10,00.</p>
+              <label class="field-label scenario-label" for="scenario">Cenário de teste</label>
+              <select id="scenario" name="scenario">
+                <option value="normal">Operação normal</option>
+                <option value="bank">Banco indisponível</option>
+                <option value="cash">Cédulas insuficientes (estoque limitado)</option>
+                <option value="dispenser">Falha no dispensador</option>
+                <option value="partial">Entrega parcial + estorno</option>
+                <option value="pin">PIN inválido</option>
+                <option value="balance">Saldo insuficiente (conta de teste)</option>
+                <option value="timeout">Tempo esgotado na autorização</option>
+                <option value="rollback">Falha no estorno</option>
+              </select>
+              <p class="field-help scenario-help" id="scenario-help">Operação normal: valida, autoriza, debita e entrega as cédulas.</p>
+              <button class="withdraw-button" type="submit">Realizar saque <span aria-hidden="true">→</span></button>
+            </form>
+            <div class="guided-controls">
+              <button class="secondary-button" id="guided-start" type="button">Iniciar roteiro guiado</button>
+            </div>
+            <section class="guided-panel" id="guided-panel" aria-labelledby="guided-title" aria-live="polite" hidden>
+              <p class="eyebrow">ROTEIRO DE DEMONSTRAÇÃO <span id="guided-progress"></span></p>
+              <h3 id="guided-title"></h3>
+              <p id="guided-copy"></p>
+              <div class="guided-actions">
+                <button class="secondary-button" id="guided-next" type="button">Próxima etapa</button>
+                <button class="text-button guided-end" id="guided-end" type="button">Encerrar roteiro</button>
+              </div>
+            </section>
+            <div class="limits-note">
+              <strong>Limites fictícios</strong>
+              <span>Até <b>R$ 500</b> por saque · <b>R$ 1.000</b> por conta/sessão</span>
+            </div>
+            <p class="simulation-note"><span aria-hidden="true">ⓘ</span> Simulação educativa. PIN e valores são fictícios; nenhuma operação bancária real é realizada.</p>
+          </div>
+          <aside class="result-panel" aria-labelledby="result-title">
+            <div class="result-heading">
+              <div><p class="eyebrow">RETORNO DO SISTEMA</p><h2 id="result-title">Resultado da operação</h2></div>
+              <span class="result-indicator" id="result-indicator" aria-hidden="true">—</span>
+            </div>
+            <div class="result-message" id="result-message" role="status" aria-live="polite" aria-atomic="true">
+              <span class="message-icon" id="message-icon" aria-hidden="true">↳</span>
+              <div><strong id="message-title">Pronto para simular</strong><p id="message-description">Escolha um cenário e realize uma operação para ver a resposta do sistema.</p></div>
+            </div>
+            <div class="state-heading"><h3>Estado financeiro</h3><span>ANTES <span aria-hidden="true">→</span> DEPOIS</span></div>
+            <div class="state-table" aria-live="polite">
+              <div class="state-row">
+                <span>Saldo em conta</span>
+                <span><b id="before-balance">R$ 2.450,00</b><span class="state-arrow">→</span><b id="after-balance">R$ 2.450,00</b></span>
+              </div>
+              <div class="state-row">
+                <span>Dinheiro no caixa</span>
+                <span><b id="before-cash">R$ 1.200,00</b><span class="state-arrow">→</span><b id="after-cash">R$ 1.200,00</b></span>
+              </div>
+              <div class="state-row">
+                <span>Limite da conta usado</span>
+                <span><b id="before-session">R$ 0,00</b><span class="state-arrow">→</span><b id="after-session">R$ 0,00</b></span>
+              </div>
+            </div>
+            <ol class="transaction-flow" id="transaction-flow" aria-label="Etapas da transação">
+              <li><span>1</span> Validar</li><li><span>2</span> Autenticar</li><li><span>3</span> Autorizar</li><li><span>4</span> Debitar</li><li><span>5</span> Entregar</li><li><span>6</span> Estornar</li>
+            </ol>
+            <div class="expectation" id="expectation">
+              <span class="expectation-mark" aria-hidden="true">✓</span>
+              <p><strong>O que esperar</strong><br><span id="expectation-copy">Em uma operação normal, o valor é debitado e as cédulas são entregues.</span></p>
+            </div>
+            <button class="reset-button" id="reset-button" type="button">↺ <span>Reiniciar simulação</span></button>
+          </aside>
+        </section>
+        <section class="inventory-section" aria-labelledby="inventory-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">ESTOQUE SIMULADO</p><h2 id="inventory-title">Cédulas no terminal</h2></div>
+            <span class="inventory-total">Total: <b id="cash-total">R$ 1.200,00</b></span>
+          </div>
+          <div class="denominations" id="denominations">
+            <div class="denomination"><span>R$ 100</span><b data-denomination="100">4</b><small>cédulas</small></div>
+            <div class="denomination"><span>R$ 50</span><b data-denomination="50">8</b><small>cédulas</small></div>
+            <div class="denomination"><span>R$ 20</span><b data-denomination="20">10</b><small>cédulas</small></div>
+            <div class="denomination"><span>R$ 10</span><b data-denomination="10">20</b><small>cédulas</small></div>
+          </div>
+        </section>
+
+        <section class="vmodel-section" aria-labelledby="vmodel-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">RASTREABILIDADE DE PONTA A PONTA</p><h2 id="vmodel-title">O Modelo V aplicado ao saque</h2></div>
+            <p class="section-description">Cada decisão de projeto tem um nível de teste correspondente. Selecione um cenário acima para exercitar os casos.</p>
+          </div>
+          <div class="v-diagram">
+            <div class="v-side v-left" aria-label="Níveis de especificação e projeto">
+              <article class="v-level">
+                <span class="v-depth">01 · NECESSIDADE</span>
+                <h3>Requisitos do usuário</h3>
+                <p>Consultar saldo e sacar sem débito indevido.</p>
+                <span class="v-test-link">↘ Aceitação · AT-01</span>
+              </article>
+              <article class="v-level">
+                <span class="v-depth">02 · SISTEMA</span>
+                <h3>Requisitos do sistema</h3>
+                <p>Validar PIN, saldo, limites e disponibilidade.</p>
+                <span class="v-test-link">↘ Sistema · ST-01</span>
+              </article>
+              <article class="v-level">
+                <span class="v-depth">03 · ARQUITETURA</span>
+                <h3>Subsistemas e interfaces</h3>
+                <p>Coordenar conta, estoque e dispensador.</p>
+                <span class="v-test-link">↘ Integração · IT-01</span>
+              </article>
+              <article class="v-level">
+                <span class="v-depth">04 · DETALHE</span>
+                <h3>Componentes e regras</h3>
+                <p>Calcular cédulas, débito e compensação.</p>
+                <span class="v-test-link">↘ Unidade · UT-01</span>
+              </article>
+              <div class="v-implementation"><span>05 · IMPLEMENTAÇÃO</span><strong>Simulador executável</strong></div>
+            </div>
+            <div class="v-side v-right" aria-label="Níveis de teste e validação">
+              <article class="v-level test-level">
+                <span class="v-depth">ACEITAÇÃO · AT-01</span>
+                <h3>O usuário consegue concluir um saque?</h3>
+                <p>Fluxo completo, resultado e saldo final correspondem ao esperado.</p>
+                <span class="test-state" data-test="AT-01">Ainda não executado</span>
+                <span class="test-state" data-test="AT-02">Ainda não executado</span>
+              </article>
+              <article class="v-level test-level">
+                <span class="v-depth">SISTEMA · ST-01</span>
+                <h3>Regras e limites são respeitados?</h3>
+                <p>PIN, valor, saldo, limite por saque e limite da sessão.</p>
+                <span class="test-state" data-test="ST-01">Ainda não executado</span>
+              </article>
+              <article class="v-level test-level">
+                <span class="v-depth">INTEGRAÇÃO · IT-01</span>
+                <h3>Conta e dispensador ficam consistentes?</h3>
+                <p>Autorização, estoque, entrega, estorno e reconciliação.</p>
+                <span class="test-state" data-test="IT-01">Ainda não executado</span>
+              </article>
+              <article class="v-level test-level">
+                <span class="v-depth">UNIDADE · UT-01</span>
+                <h3>Cálculos e validações funcionam?</h3>
+                <p>Denominações exatas, entradas válidas e limites.</p>
+                <span class="test-state" data-test="UT-01">Ainda não executado</span>
+              </article>
+              <div class="v-implementation test-implementation"><span>BASE DE TESTES</span><strong>Casos vinculados abaixo ↓</strong></div>
+            </div>
+          </div>
+          <p class="v-caption">VERIFICAÇÃO: “construímos corretamente?” · VALIDAÇÃO: “construímos o que o usuário precisa?”</p>
+        </section>
+
+        <section class="trace-section" aria-labelledby="trace-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">EVIDÊNCIAS DA SIMULAÇÃO</p><h2 id="trace-title" tabindex="-1">Matriz de rastreabilidade</h2></div>
+            <div class="trace-actions">
+              <span class="trace-progress" id="trace-progress" role="status" aria-live="polite">0 de 12 cenários executados</span>
+              <button class="secondary-button" id="test-suite-button" type="button">Executar suíte automatizada</button>
+              <button class="secondary-button" id="export-report-button" type="button">Exportar relatório JSON</button>
+            </div>
+          </div>
+          <p class="field-help suite-status" id="test-suite-status" role="status" aria-live="polite">Os resultados começam como não executados; a suíte roda cada cenário em estado isolado.</p>
+          <div class="trace-table-wrap">
+            <table class="trace-table">
+              <caption class="visually-hidden">Rastreabilidade entre requisitos, casos de teste e resultados observados</caption>
+              <thead><tr><th scope="col">Requisito</th><th scope="col">Cenário / teste</th><th scope="col">Resultado esperado</th><th scope="col">Resultado observado</th><th scope="col">Status</th></tr></thead>
+              <tbody>
+                <tr data-case="withdraw"><td><b>REQ-01</b><small>Usuário</small></td><td>AT-01 · Saque autorizado</td><td>Debita e entrega o valor exato.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="invalid"><td><b>REQ-02</b><small>Sistema</small></td><td>ST-02 · Valor inválido</td><td>Rejeita sem alterar saldo ou caixa.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="bank"><td><b>REQ-03</b><small>Integração</small></td><td>IT-01 · Banco indisponível</td><td>Interrompe sem débito nem entrega.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="cash"><td><b>REQ-04</b><small>Terminal</small></td><td>IT-02 · Estoque insuficiente</td><td>Recusa antes de debitar.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="balance"><td><b>REQ-05</b><small>Conta</small></td><td>ST-03 · Saldo insuficiente</td><td>Recusa sem debitar ou dispensar.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="dispenser"><td><b>REQ-06</b><small>Recuperação</small></td><td>IT-03 · Falha antes da entrega</td><td>Não mantém débito sem cédulas.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="partial"><td><b>REQ-07</b><small>Reconciliação</small></td><td>IT-04 · Entrega parcial</td><td>Ajusta débito ao entregue e reconcilia.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="pin"><td><b>REQ-08</b><small>Autenticação</small></td><td>ST-04 · PIN inválido</td><td>Bloqueia antes de consultar/debitar.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="limit"><td><b>REQ-09</b><small>Limites</small></td><td>ST-05 · Limite excedido</td><td>Recusa e mantém os valores.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="timeout"><td><b>REQ-10</b><small>Disponibilidade</small></td><td>IT-05 · Tempo esgotado</td><td>Interrompe sem débito nem entrega.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="rollback"><td><b>REQ-11</b><small>Recuperação</small></td><td>IT-06 · Falha no estorno</td><td>Marca débito pendente; reconciliação corrige sem alterar o caixa.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+                <tr data-case="consult"><td><b>REQ-12</b><small>Consulta</small></td><td>AT-02 · Consultar saldo</td><td>Exibe o saldo sem alterar o estado financeiro.</td><td class="observed">Ainda não executado</td><td><span class="case-status">Pendente</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="audit-section" aria-labelledby="audit-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">EVENTOS DA SESSÃO</p><h2 id="audit-title">Trilha de auditoria</h2></div>
+            <span class="trace-progress" id="audit-count">0 eventos</span>
+          </div>
+          <ol class="audit-list" id="audit-list" aria-live="polite">
+            <li class="audit-empty">As operações e transições da simulação aparecerão aqui.</li>
+          </ol>
+          <button class="reconcile-button" id="reconcile-button" type="button" hidden>Concluir reconciliação simulada</button>
+        </section>
+
+        <aside class="assumptions" aria-label="Premissas educacionais">
+          <strong>Premissas didáticas — não representam regras universais de bancos</strong>
+          <p>PIN fixo 1234, saldo e cédulas fictícios; limite de R$ 500 por saque e R$ 1.000 por conta na sessão de demonstração. Em falha parcial, o simulador registra débito, entrega e estorno apenas da parcela não entregue: o débito líquido equivale às cédulas recebidas. A reconciliação fica pendente até confirmação manual. Sistemas reais podem ter políticas, prazos e resultados diferentes.</p>
+        </aside>
+      </main>
+      <footer>
+        <span>CAIXA DE TESTE <span aria-hidden="true">·</span> MODELO V</span>
+        <span>Projeto educacional — valores fictícios</span>
+      </footer>
+    </div>
+  </body>
+</html>
